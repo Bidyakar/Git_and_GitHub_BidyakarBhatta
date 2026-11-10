@@ -1,4 +1,3 @@
- 
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,6 +10,7 @@
             background: #f4f4f4;
             padding: 40px;
         }
+
         .container {
             max-width: 450px;
             margin: auto;
@@ -18,12 +18,14 @@
             padding: 25px;
             border-radius: 10px;
         }
+
         input, textarea, button {
             width: 100%;
             padding: 12px;
             margin: 10px 0;
             box-sizing: border-box;
         }
+
         button {
             background: #2563eb;
             color: white;
@@ -35,11 +37,24 @@
 <body>
     <div class="container">
         <h2>To-Do Page</h2>
+
         <form id="todoForm">
-            <input type="text" id="itemName" placeholder="Item Name" required>
-            <textarea id="itemDescription" placeholder="Item Description" required></textarea>
+            <input
+                type="text"
+                id="itemName"
+                placeholder="Item Name"
+                required
+            >
+
+            <textarea
+                id="itemDescription"
+                placeholder="Item Description"
+                required
+            ></textarea>
+
             <button type="submit">Add To-Do</button>
         </form>
+
         <p id="message"></p>
     </div>
 
@@ -53,14 +68,24 @@
             try {
                 const response = await fetch("/submittodoitem", {
                     method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ itemName, itemDescription })
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        itemName,
+                        itemDescription
+                    })
                 });
 
                 const result = await response.json();
                 document.getElementById("message").textContent = result.message;
+
+                if (response.ok) {
+                    document.getElementById("todoForm").reset();
+                }
             } catch (error) {
-                document.getElementById("message").textContent = "Something went wrong.";
+                document.getElementById("message").textContent =
+                    "Something went wrong.";
             }
         });
     </script>
