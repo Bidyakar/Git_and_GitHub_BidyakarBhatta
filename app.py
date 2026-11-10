@@ -1,4 +1,3 @@
-
 import json
 from datetime import datetime, timezone
 
@@ -10,11 +9,19 @@ from config import submissions_collection
 app = Flask(__name__)
 
 
+# Home page
 @app.route("/")
 def home():
     return render_template("index.html")
 
 
+# To-Do page
+@app.route("/todo")
+def todo():
+    return render_template("todo.html")
+
+
+# API route - Read JSON data
 @app.route("/api")
 def get_data():
     with open("data/data.json", "r", encoding="utf-8") as file:
@@ -23,6 +30,7 @@ def get_data():
     return jsonify(data)
 
 
+# Existing contact form submission
 @app.route("/submit", methods=["POST"])
 def submit_form():
     name = request.form.get("name", "").strip()
@@ -60,6 +68,39 @@ def submit_form():
         ), 500
 
 
+# New To-Do API - Save item to MongoDB
+@app.route("/submittodoitem", methods=["POST"])
+def submit_todo_item():
+    data = request.get_json(silent=True) or {}
+
+    item_name = data.get("itemName", "").strip()
+    item_description = data.get("itemDescription", "").strip()
+
+    if not item_name or not item_description:
+        return jsonify({
+            "message": "Both fields are required"
+        }), 400
+
+    try:
+        submissions_collection.insert_one({
+            "itemName": item_name,
+            "itemDescription": item_description,
+            "created_at": datetime.now(timezone.utc)
+        })
+
+        return jsonify({
+            "message": "To-Do item saved successfully!"
+        }), 201
+
+    except PyMongoError:
+        app.logger.exception("To-Do submission failed")
+
+        return jsonify({
+            "message": "Unable to save To-Do item"
+        }), 500
+
+
+# Success page
 @app.route("/success")
 def success():
     return render_template("success.html")
