@@ -16,5 +16,11 @@
         "name": "David",
         "email": "david@example.com",
         "role": "Staff"
+    },
+    {
+        "id": 4,
+        "name": "Michael",
+        "email": "michael@example.com",
+        "role": "Developer"
     }
 ]
